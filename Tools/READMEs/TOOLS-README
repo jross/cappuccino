@@ -81,7 +81,7 @@ objj is a command line Objective-J interpreter and interactive console.
 * objjc
 **********************************************************************
 
-objjc is a static preinterpreter for Objectie-J. It will take Objective-J files and essentially convert them to JavaScript. However, for complex interaction between files, you will probably want to use steam (see below).
+objjc is a static pre-interpreter for Objective-J. It will take Objective-J files and essentially convert them to JavaScript. However, for complex interaction between files, you will probably want to use steam (see below).
 
 ***********************************************************************
 * steam
