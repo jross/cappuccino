@@ -19,21 +19,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
+ 
 @import "CPDOMWindowBridge.j"
 @import "CPFlashMovie.j"
 @import "CPView.j"
-
-
+ 
+ 
 @implementation CPFlashView : CPView
 {
     CPFlashMovie    _flashMovie;
+    CPDictionary    _flashVars;
     
     DOMElement      _DOMEmbedElement;
     DOMElement      _DOMMParamElement;
     DOMElement      _DOMObjectElement;
 }
-
+ 
 - (id)initWithFrame:(CGRect)aFrame
 {
     self = [super initWithFrame:aFrame];
@@ -59,12 +60,12 @@
         _DOMObjectElement.appendChild(param);
         
         _DOMEmbedElement = document.createElement("embed");
-
+ 
         _DOMEmbedElement.type = "application/x-shockwave-flash";
         _DOMEmbedElement.setAttribute("wmode", "transparent");
         _DOMEmbedElement.width = "100%";
         _DOMEmbedElement.height = "100%";
-
+ 
         // IE requires this thing to be in the _DOMElement and not the _DOMObjectElement.
         _DOMElement.appendChild(_DOMEmbedElement);
                 
@@ -73,7 +74,7 @@
     
     return self;
 }
-
+ 
 - (void)setFlashMovie:(CPFlashMovie)aFlashMovie
 {
     if (_flashMovie == aFlashMovie)
@@ -87,24 +88,49 @@
        _DOMEmbedElement.src = aFlashMovie._fileName;
 }
 
+- (void)setFlashVars:(CPDictionary)aDictionary
+{
+    if (_flashVars == aDictionary)
+        return;
+        
+    _flashVars = aDictionary;
+    
+    var flashVarsString = [[CPString alloc] init],
+        enumerator = [_flashVars keyEnumerator];
+        
+    while (key = [enumerator nextObject]) {
+      flashVarsString = [[CPString alloc] stringByAppendingFormat:"%@&%@=%@", flashVarsString, key, [_flashVars objectForKey:key]];
+    }
+    
+    var param = document.createElement("param");
+    
+    param.name = "flashvars";
+    param.value = flashVarsString;
+    
+    _DOMObjectElement.appendChild(param);
+    
+    if (_DOMEmbedElement)
+       _DOMEmbedElement.setAttribute("flashvars", flashVarsString);
+}
+ 
 - (CPFlashMovie)flashMovie
 {
     return _flashMovie;
 }
-
+ 
 - (void)mouseDragged:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
 }
-
+ 
 - (void)mouseDown:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
 }
-
+ 
 - (void)mouseUp:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
 }
-
+ 
 @end
