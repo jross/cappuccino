@@ -19,22 +19,23 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
- 
+
 @import "CPDOMWindowBridge.j"
 @import "CPFlashMovie.j"
 @import "CPView.j"
- 
- 
+
+
 @implementation CPFlashView : CPView
 {
     CPFlashMovie    _flashMovie;
     CPDictionary    _flashVars;
+    CPDictionary    _params;
     
     DOMElement      _DOMEmbedElement;
     DOMElement      _DOMMParamElement;
     DOMElement      _DOMObjectElement;
 }
- 
+
 - (id)initWithFrame:(CGRect)aFrame
 {
     self = [super initWithFrame:aFrame];
@@ -74,7 +75,7 @@
     
     return self;
 }
- 
+
 - (void)setFlashMovie:(CPFlashMovie)aFlashMovie
 {
     if (_flashMovie == aFlashMovie)
@@ -96,7 +97,8 @@
     _flashVars = aDictionary;
     
     var flashVarsString = [[CPString alloc] init],
-        enumerator = [_flashVars keyEnumerator];
+        enumerator = [_flashVars keyEnumerator],
+        key;
         
     while (key = [enumerator nextObject]) {
       flashVarsString = [[CPString alloc] stringByAppendingFormat:"%@&%@=%@", flashVarsString, key, [_flashVars objectForKey:key]];
@@ -112,22 +114,43 @@
     if (_DOMEmbedElement)
        _DOMEmbedElement.setAttribute("flashvars", flashVarsString);
 }
- 
+
+- (void)setParams:(CPDictionary)aDictionary
+{
+    if (_params == aDictionary)
+        return;
+        
+    _params = aDictionary;
+    
+    var enumerator = [_params keyEnumerator],
+        key;
+        
+    while (key = [enumerator nextObject]) {
+
+        var param = document.createElement("param");
+        
+        param.name = key;
+        param.value = [_params objectForKey:key];
+    
+        _DOMObjectElement.appendChild(param);
+    }
+}
+
 - (CPFlashMovie)flashMovie
 {
     return _flashMovie;
 }
- 
+
 - (void)mouseDragged:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
 }
- 
+
 - (void)mouseDown:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
 }
- 
+
 - (void)mouseUp:(CPEvent)anEvent
 {
     [[CPDOMWindowBridge sharedDOMWindowBridge] _propagateCurrentDOMEvent:YES];
