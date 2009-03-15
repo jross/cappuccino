@@ -89,6 +89,11 @@
        _DOMEmbedElement.src = aFlashMovie._fileName;
 }
 
+- (CPFlashMovie)flashMovie
+{
+    return _flashMovie;
+}
+
 - (void)setFlashVars:(CPDictionary)aDictionary
 {
     if (_flashVars == aDictionary)
@@ -100,9 +105,8 @@
         enumerator = [_flashVars keyEnumerator],
         key;
         
-    while (key = [enumerator nextObject]) {
+    while (key = [enumerator nextObject])
       flashVarsString = [[CPString alloc] stringByAppendingFormat:"%@&%@=%@", flashVarsString, key, [_flashVars objectForKey:key]];
-    }
     
     var param = document.createElement("param");
     
@@ -115,6 +119,11 @@
        _DOMEmbedElement.setAttribute("flashvars", flashVarsString);
 }
 
+- (CPDictionary)flashVars
+{
+    return _flashVars;
+}
+
 - (void)setParams:(CPDictionary)aDictionary
 {
     if (_params == aDictionary)
@@ -125,20 +134,23 @@
     var enumerator = [_params keyEnumerator],
         key;
         
-    while (key = [enumerator nextObject]) {
-
+    while (key = [enumerator nextObject])
+    {
         var param = document.createElement("param");
         
         param.name = key;
         param.value = [_params objectForKey:key];
     
         _DOMObjectElement.appendChild(param);
+    
+        if (_DOMEmbedElement)
+           _DOMEmbedElement.setAttribute(key, [_params objectForKey:key]);
     }
 }
 
-- (CPFlashMovie)flashMovie
+- (CPDictionary)params
 {
-    return _flashMovie;
+    return _params;
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
