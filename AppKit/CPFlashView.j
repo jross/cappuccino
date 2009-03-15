@@ -28,6 +28,7 @@
 @implementation CPFlashView : CPView
 {
     CPFlashMovie    _flashMovie;
+    CPString        _identifier;
     CPDictionary    _flashVars;
     CPDictionary    _params;
     
@@ -92,6 +93,24 @@
 - (CPFlashMovie)flashMovie
 {
     return _flashMovie;
+}
+
+- (void)setIdentifier:(CPString)aString
+{
+    if (_identifier == aString)
+        return;
+        
+    _identifier = aString;
+    
+    _DOMObjectElement.id = _identifier;
+    
+    if (_DOMEmbedElement)
+       _DOMEmbedElement.name = _identifier;
+}
+
+- (CPString)identifier
+{
+    return _identifier;
 }
 
 - (void)setFlashVars:(CPDictionary)aDictionary
